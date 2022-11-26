@@ -1,0 +1,1 @@
+composer require fearless/think-tool
