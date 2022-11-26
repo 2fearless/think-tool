@@ -10,8 +10,8 @@ use think\helper\Str;
 class CreateAdminController extends CommonScaffold
 {
     public function create($table_name){
-        $name = ucfirst($table_name);
-        $path = app_path('admin/controller').Str::camel($name).'.php';
+        $name = ucfirst(Str::camel($table_name));
+        $path = app_path('admin/controller').$name.'.php';
         $stub = file_get_contents($this->getStub());
         $prefix = config('database.connections')[config('database.default')]['prefix'];
         $full_name = $prefix.$table_name;
@@ -32,7 +32,7 @@ class CreateAdminController extends CommonScaffold
      */
     protected function replaceName(&$stub, string $name)
     {
-        $stub = str_replace(['Dummy', 'dummy'], [Str::camel($name), Str::camel($name)], $stub);
+        $stub = str_replace('Dummy',$name, $stub);
         return $this;
     }
 
