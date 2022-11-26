@@ -1,0 +1,25 @@
+{
+    "name": "fearless/think-tool",
+    "autoload": {
+        "psr-4": {
+            "Fearless\\ThinkTool\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "fearless",
+            "email": "983527455@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.0",
+        "topthink/framework": "^6.0.0"
+    },
+    "extra": {
+        "think": {
+            "services": [
+                "Fearless\\ThinkTool\\Service"
+            ]
+        }
+    }
+}
