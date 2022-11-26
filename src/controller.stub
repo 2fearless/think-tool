@@ -1,0 +1,31 @@
+<?php
+declare (strict_types=1);
+
+namespace app\admin\controller;
+
+use app\admin\model\Dummy as DummyModel;
+use app\common\controller\HwController;
+
+class Dummy extends HwController
+{
+    public function initdata($name = [])
+    {
+        $this->addDb(new DummyModel());
+
+        if (in_array('table', $name)) {
+            $this->addTable();
+
+            $this->addToolbarAdd();
+
+            $this->addOperateEdit();
+            $this->addOperateDelete();
+        }
+
+        $require = 'required';
+        if (in_array('cols', $name)) {
+
+            Field
+            $this->addRowAction();
+        }
+    }
+}
