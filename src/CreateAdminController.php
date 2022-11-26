@@ -32,7 +32,7 @@ class CreateAdminController extends CommonScaffold
      */
     protected function replaceName(&$stub, string $name)
     {
-        $stub = str_replace(['Dummy', 'dummy'], [$name, Str::snake($name)], $stub);
+        $stub = str_replace(['Dummy', 'dummy'], [Str::snake($name), Str::snake($name)], $stub);
         return $this;
     }
 
