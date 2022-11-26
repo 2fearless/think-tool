@@ -1,5 +1,6 @@
 {
     "name": "fearless/think-tool",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "Fearless\\ThinkTool\\": "src/"
