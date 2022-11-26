@@ -10,7 +10,6 @@ use think\helper\Str;
 class CreateAdminController extends CommonScaffold
 {
     public function create($table_name){
-        $table_name = 'news';
         $name = ucfirst($table_name);
         $path = app_path('admin/controller').$name.'.php';
         $stub = file_get_contents($this->getStub());
@@ -74,6 +73,6 @@ class CreateAdminController extends CommonScaffold
      */
     public function getStub()
     {
-        return __DIR__.'/stubs/controller.stub';
+        return __DIR__.'/controller.stub';
     }
 }
