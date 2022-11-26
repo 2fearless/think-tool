@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Fearless\ThinkTool;
+namespace Fearless\ThinkTool\Service;
 
 use Fearless\ThinkTool\Command\TestCommand;
 use thans\jwt\command\SecretCommand;
