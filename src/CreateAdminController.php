@@ -4,6 +4,7 @@
 namespace Fearless\ThinkTool;
 
 //admin_controller创建
+use think\facade\Console;
 use think\facade\Db;
 use think\helper\Str;
 
@@ -12,14 +13,17 @@ class CreateAdminController extends CommonScaffold
     public function create($table_name){
         $name = ucfirst(Str::camel($table_name));
         $path = app_path('admin/controller').$name.'.php';
-        $stub = file_get_contents($this->getStub());
-        $prefix = config('database.connections')[config('database.default')]['prefix'];
-        $full_name = $prefix.$table_name;
-        $stub = $this
-            ->replaceName($stub,$name)
-            ->replaceField($stub,$full_name)
-            ->replaceSpace($stub);
-        file_put_contents($path,$stub);
+        Console::call('make:model',['admin@'.$name]);
+        if (!is_file($path));{
+            $stub = file_get_contents($this->getStub());
+            $prefix = config('database.connections')[config('database.default')]['prefix'];
+            $full_name = $prefix.$table_name;
+            $stub = $this
+                ->replaceName($stub,$name)
+                ->replaceField($stub,$full_name)
+                ->replaceSpace($stub);
+            file_put_contents($path,$stub);
+        }
         return $path;
     }
     /**
