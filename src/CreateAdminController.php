@@ -11,10 +11,11 @@ use think\helper\Str;
 class CreateAdminController extends CommonScaffold
 {
     public function create($table_name){
+        $module = 'admin';
         $name = ucfirst(Str::camel($table_name));
-        $path = app_path('admin/controller').$name.'.php';
-        Console::call('make:model',['admin@'.$name]);
-        if (!is_file($path));{
+        $path = app_path($module.'/controller').$name.'.php';
+        Console::call('make:model',[$module.'@'.$name]);
+        if (!is_file($path)){
             $stub = file_get_contents($this->getStub());
             $prefix = config('database.connections')[config('database.default')]['prefix'];
             $full_name = $prefix.$table_name;
@@ -44,6 +45,7 @@ class CreateAdminController extends CommonScaffold
     {
         $result = get_cols($full_name);
         $str = '';
+        $valid = '';
         foreach ($result as $item){
             if ($item['pk']){
                 $str .= '$this->addColumnId();'."\n";
@@ -53,9 +55,11 @@ class CreateAdminController extends CommonScaffold
                 }else{
                     $str .= "\t\t\t".'$this->addColumn(\''.$item['field'].'\', \''.$item['comment'].'\')->add($require)->edit($require)->form_width(2);'."\n";
                 }
+                $valid = "\t\t\t\t'".$item['field'].'|'.$item['comment']."' => 'require',"."\n";
             }
         }
         $stub = str_replace('Field', $str, $stub);
+        $stub = str_replace('Valid', $valid, $stub);
         return $this;
     }
 

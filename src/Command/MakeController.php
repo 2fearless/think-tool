@@ -15,7 +15,7 @@ class MakeController extends \think\console\Command
     {
         $this->setName('hw:mc')
             ->addArgument('name', Argument::OPTIONAL, "table name")
-            ->setDescription('创建控制器');
+            ->setDescription('创建控制器和模型');
     }
 
     public function execute(Input $input, Output $output)
