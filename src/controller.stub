@@ -30,7 +30,7 @@ class Dummy extends HwController
 
         if (in_array('rule', $name)) {
             $this->addRule([
-                Valid
+Valid
             ]);
         }
     }
