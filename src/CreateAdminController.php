@@ -13,7 +13,7 @@ class CreateAdminController extends CommonScaffold
     public function create($table_name){
         $module = 'admin';
         $name = ucfirst(Str::camel($table_name));
-        $path = app_path($module.'/controller').$name.'.php';
+        $path = root_path('app/'.$module.'/controller').$name.'.php';
         Console::call('make:model',[$module.'@'.$name]);
         if (!is_file($path)){
             $stub = file_get_contents($this->getStub());
