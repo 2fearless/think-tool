@@ -25,8 +25,7 @@ if (!function_exists('show_tables')) {
     function show_tables()
     {
         $database = config('database.connections')[config('database.default')]['database'];
-        $rows = Db::query('show tables from ' . $database);
-        return array_column($rows, 'Tables_in_' . $database);
+        return Db::query("SELECT table_name,table_comment FROM information_schema.TABLES WHERE table_schema = '".$database."'");
     }
 }
 if (!function_exists('replace_first')) {
