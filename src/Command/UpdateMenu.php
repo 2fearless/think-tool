@@ -24,7 +24,7 @@ class UpdateMenu extends \think\console\Command
         Console::call('seed:run');
         $menu_class = $this->hasMenuController($this->allClasses());
         foreach ($menu_class as $item){
-            $this->fillMenu($item::$menu);
+            $this->fillMenu([$item::$menu]);
         }
         $output->writeln('菜单更新完毕');
     }
