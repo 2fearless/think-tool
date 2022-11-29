@@ -8,6 +8,9 @@ use app\common\controller\HwController;
 
 class Dummy extends HwController
 {
+    public static $menu = [
+        FillMenu
+    ];
     public function initdata($name = [])
     {
         $this->addDb(new DummyModel());
@@ -34,4 +37,5 @@ Valid
             ]);
         }
     }
+
 }

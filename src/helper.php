@@ -21,14 +21,25 @@ if (!function_exists('get_cols')) {
 }
 
 if (!function_exists('show_tables')) {
-    //获取字段分类
+    //获取当前数据库表及注释
     function show_tables()
     {
         $database = config('database.connections')[config('database.default')]['database'];
         return Db::query("SELECT table_name,table_comment FROM information_schema.TABLES WHERE table_schema = '".$database."'");
     }
 }
+
+if (!function_exists('show_table_comment')) {
+    //获取当前表注释
+    function show_table_comment($table)
+    {
+        $database = config('database.connections')[config('database.default')]['database'];
+        return Db::query("SELECT table_comment FROM information_schema.TABLES WHERE table_schema = '".$database."' AND table_name = '".$table."'")[0]['table_comment'];
+    }
+}
+
 if (!function_exists('replace_first')) {
+    //函数替换字符串中给定值的第一个匹配项
     function replace_first($search, $replace, $subject)
     {
         if ($search === '') {
