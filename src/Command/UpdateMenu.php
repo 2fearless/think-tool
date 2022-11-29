@@ -24,7 +24,7 @@ class UpdateMenu extends \think\console\Command
         Console::call('seed:run');
         $menu_class = $this->hasMenuController($this->allClasses());
         foreach ($menu_class as $item){
-            $this->fillMenu([$item::$menu]);
+            $this->fillMenu($item::$menu);
         }
         $output->writeln('菜单更新完毕');
     }
@@ -55,8 +55,28 @@ class UpdateMenu extends \think\console\Command
 
     public function fillMenu($data){
         $now = now()->toDateTimeString();
-        [$temp, $id] = $this->formatData($data, [], 0, $now, 0);
-        Db::table('sys_menu')->insert($temp)->saveData();
+//        $prefix = config('database.connections')[config('database.default')]['prefix'];
+        foreach ($data as $v1){
+            $son1 = $v1['son'];
+            unset($v1['son']);
+            $v1['create_time'] = $now;
+            $v1['update_time'] = $now;
+            $v1id = Db::name('sys_menu')->insertGetId($v1);
+            foreach ($son1 as $v2){
+                $son2 = $v2['son'];
+                $v2['pid'] = $v1id;
+                $v2['create_time'] = $now;
+                $v2['update_time'] = $now;
+                unset($v2['son']);
+                $v2id = Db::name('sys_menu')->insertGetId($v2);
+                foreach ($son2 as $v3){
+                    $v3['create_time'] = $now;
+                    $v3['update_time'] = $now;
+                    $v3['pid'] = $v2id;
+                    Db::name('sys_menu')->insertGetId($v3);
+                }
+            }
+        }
     }
     private function formatData($data, $temp, $id, $now, $pid)
     {
