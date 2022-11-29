@@ -67,9 +67,8 @@ class CreateAdminController extends CommonScaffold
     protected function fillMenu(&$stub, string $full_name,$name)
     {
         $comment = rtrim(show_table_comment($full_name),'表');
-        $str = "
-        'name' => '{$comment}管理', 'type' => 0, 'icon' => 'layui-icon-tabs', 'app' => 'admin', 'controller' => '{$name}', 'action' => 'index', 'parameter' => '', 'status' => 1, 'isshow' => 1, 'sort' => 0, 'son' => [
-        ['name' => '{$comment}列表', 'type' => 1, 'icon' => 'icon-md-apps', 'app' => 'admin', 'controller' => 'news', 'action' => 'index', 'parameter' => '', 'status' => 1, 'isshow' => 1, 'sort' => 0, 'son' => [
+        $str = "'name' => '{$comment}管理', 'type' => 0, 'icon' => 'layui-icon-tabs', 'app' => 'admin', 'controller' => '{$name}', 'action' => 'index', 'parameter' => '', 'status' => 1, 'isshow' => 1, 'sort' => 0, 'son' => [
+        ['name' => '{$comment}列表', 'type' => 1, 'icon' => 'icon-md-apps', 'app' => 'admin', 'controller' => '{$name}', 'action' => 'index', 'parameter' => '', 'status' => 1, 'isshow' => 1, 'sort' => 0, 'son' => [
             ['name' => '{$comment}添加', 'type' => 0, 'icon' => '', 'app' => 'admin', 'controller' => '{$name}', 'action' => 'add', 'parameter' => '', 'status' => 0, 'isshow' => 0, 'sort' => 0],
             ['name' => '{$comment}编辑', 'type' => 0, 'icon' => '', 'app' => 'admin', 'controller' => '{$name}', 'action' => 'edit', 'parameter' => '', 'status' => 0, 'isshow' => 0, 'sort' => 0],
             ['name' => '{$comment}删除', 'type' => 0, 'icon' => '', 'app' => 'admin', 'controller' => '{$name}', 'action' => 'delete', 'parameter' => '', 'status' => 0, 'isshow' => 0, 'sort' => 0],

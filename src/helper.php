@@ -25,7 +25,7 @@ if (!function_exists('show_tables')) {
     function show_tables()
     {
         $database = config('database.connections')[config('database.default')]['database'];
-        return Db::query("SELECT table_name,table_comment FROM information_schema.TABLES WHERE table_schema = '".$database."'");
+        return Db::query("SELECT table_name,table_comment FROM information_schema.TABLES WHERE table_schema = '" . $database . "'");
     }
 }
 
@@ -34,7 +34,7 @@ if (!function_exists('show_table_comment')) {
     function show_table_comment($table)
     {
         $database = config('database.connections')[config('database.default')]['database'];
-        return Db::query("SELECT table_comment FROM information_schema.TABLES WHERE table_schema = '".$database."' AND table_name = '".$table."'")[0]['table_comment'];
+        return Db::query("SELECT table_comment FROM information_schema.TABLES WHERE table_schema = '" . $database . "' AND table_name = '" . $table . "'")[0]['table_comment'];
     }
 }
 
@@ -55,3 +55,37 @@ if (!function_exists('replace_first')) {
         return $subject;
     }
 }
+if (!function_exists('replace_last')) {
+    //函数替换字符串中给定值的最后一个匹配项
+    function replace_last($search, $replace, $subject)
+    {
+        if ($search === '') {
+            return $subject;
+        }
+
+        $position = strrpos($subject, $search);
+
+        if ($position !== false) {
+            return substr_replace($subject, $replace, $position, strlen($search));
+        }
+
+        return $subject;
+    }
+}
+if (!function_exists('endsWith')) {
+    //是否以...结尾
+    function endsWith($haystack, $needles)
+    {
+        foreach ((array)$needles as $needle) {
+            if (
+                $needle !== '' && $needle !== null
+                && substr($haystack, -strlen($needle)) === (string)$needle
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+
