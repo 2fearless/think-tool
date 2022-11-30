@@ -29,7 +29,7 @@ class CreateAdminController extends CommonScaffold
         return $path;
     }
     /**
-     * Replace namespace dummy.
+     * 替换名称.
      *
      * @param string $stub
      * @param string $name
@@ -42,6 +42,12 @@ class CreateAdminController extends CommonScaffold
         return $this;
     }
 
+    /**
+     * 填充表单及验证
+     * @param $stub
+     * @param string $full_name
+     * @return $this
+     */
     protected function replaceField(&$stub, string $full_name)
     {
         $result = get_cols($full_name);
@@ -64,6 +70,13 @@ class CreateAdminController extends CommonScaffold
         return $this;
     }
 
+    /**
+     * 填充菜单
+     * @param $stub
+     * @param string $full_name
+     * @param $name
+     * @return $this
+     */
     protected function fillMenu(&$stub, string $full_name,$name)
     {
         $comment = rtrim(show_table_comment($full_name),'表');

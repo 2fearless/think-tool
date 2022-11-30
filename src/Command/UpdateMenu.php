@@ -21,6 +21,7 @@ class UpdateMenu extends \think\console\Command
 
     public function execute(Input $input, Output $output)
     {
+        //刷新seed中目录
         Console::call('seed:run');
         $menu_class = $this->hasMenuController($this->allClasses());
         foreach ($menu_class as $item){
@@ -53,6 +54,7 @@ class UpdateMenu extends \think\console\Command
         return $list;
     }
 
+    //单个模块填充
     public function fillMenu($data){
         $now = now()->toDateTimeString();
 //        $prefix = config('database.connections')[config('database.default')]['prefix'];
@@ -77,22 +79,5 @@ class UpdateMenu extends \think\console\Command
                 }
             }
         }
-    }
-    private function formatData($data, $temp, $id, $now, $pid)
-    {
-        foreach ($data as $k => $v) {
-            $id += 1;
-            $v['id'] = $id;
-            $v['pid'] = $pid;
-            $v['create_time'] = $now;
-            $v['update_time'] = $now;
-            $son = $v['son'] ?? false;
-            unset($v['son']);
-            $temp[] = $v;
-            if ($son) {
-                [$temp, $id] = $this->formatData($son, $temp, $id, $now, $id);
-            }
-        }
-        return [$temp, $id];
     }
 }
