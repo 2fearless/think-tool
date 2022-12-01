@@ -22,7 +22,7 @@ class UpdateMenu extends \think\console\Command
     public function execute(Input $input, Output $output)
     {
         //刷新seed中目录
-        Console::call('seed:run');
+        Console::call('seed:run',['-s','SysMenuSeeder']);
         $menu_class = $this->hasMenuController($this->allClasses());
         foreach ($menu_class as $item){
             $this->fillMenu([$item::$menu]);
