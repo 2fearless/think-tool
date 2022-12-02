@@ -85,6 +85,9 @@ class CreateAdminController extends CommonScaffold
                 ['name' => '{$comment}添加', 'type' => 0, 'icon' => '', 'app' => 'admin', 'controller' => '{$name}', 'action' => 'add', 'parameter' => '', 'status' => 0, 'isshow' => 0, 'sort' => 0],
                 ['name' => '{$comment}编辑', 'type' => 0, 'icon' => '', 'app' => 'admin', 'controller' => '{$name}', 'action' => 'edit', 'parameter' => '', 'status' => 0, 'isshow' => 0, 'sort' => 0],
                 ['name' => '{$comment}删除', 'type' => 0, 'icon' => '', 'app' => 'admin', 'controller' => '{$name}', 'action' => 'delete', 'parameter' => '', 'status' => 0, 'isshow' => 0, 'sort' => 0],
+                ['name' => '{$comment}详情', 'type' => 0, 'icon' => '', 'app' => 'admin', 'controller' => '{$name}', 'action' => 'detail', 'parameter' => '', 'status' => 0, 'isshow' => 0, 'sort' => 0],
+              //['name' => '{$comment}导入', 'type' => 0, 'icon' => '', 'app' => 'admin', 'controller' => '{$name}', 'action' => 'import', 'parameter' => '', 'status' => 0, 'isshow' => 0, 'sort' => 0],
+              //['name' => '{$comment}导出', 'type' => 0, 'icon' => '', 'app' => 'admin', 'controller' => '{$name}', 'action' => 'export', 'parameter' => '', 'status' => 0, 'isshow' => 0, 'sort' => 0],
         ]]";
 
         $stub = str_replace('FillMenu',$str, $stub);
