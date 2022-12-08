@@ -1,0 +1,102 @@
+{include file='public/header'/}
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card layui-card-page">
+                <div class="layui-card-header">创建控制器/模型/菜单</div>
+                <div class="layui-card-body" pad15>
+                    <form class="layui-form layui-forms" action="">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">选择表</label>
+                            <div class="layui-input-inline">
+                                <select name="table" lay-search="">
+                                    <option value="">请选择表</option>
+                                    {foreach $list as $vo}
+                                    <option value="{$vo['name']}">{$vo['table_name']}--{$vo['table_comment']}</option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="layuiadmin-app-form-submit">提交</button>
+                                <button class="layui-btn layui-btn-primary" type="reset">重置</button>
+                                <button class="layui-btn layui-btn-normal" id="update" type="button">更新菜单</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="__LAYUI__/layui/layui.js"></script>
+<script>
+    layui.extend({
+        ajax: '__LAYUI__/modules/ajax',
+    });
+    layui.use(['form', 'layer', 'layedit', 'laydate', 'upload', 'iconPicker', 'ajax', 'xmSelect'], function () {
+        var form = layui.form;
+        $("#update").click(function (){
+            $.ajax({
+                url: "{:url()}",    //请求的url地址
+                dataType: "json",   //返回格式为json
+                async: true,//请求是否异步，默认为异步，这也是ajax重要特性
+                type: "POST",   //请求方式
+                data: {flash:1},
+                success: function (ret) {
+                    if (ret.code == 1) {
+                        //登入成功的提示与跳转
+                        layer.msg(ret.msg, {offset: 'auto', icon: 1, time: 2000}, function () {
+                            //判断列表页是否使用table 如果没有则刷新treeTable
+                            if (parent.layui.table.index == 1) {
+                                parent.layui.table.reload('LAY-app-content-list');
+                            } else {
+                                parent.layui.treeTable.reload('LAY-app-content-list');
+                            }
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index); //再执行关闭
+                        });
+                    } else {
+                        layer.msg(ret.msg, {offset: 'auto', icon: 2, time: 2000, anim: 6}, function () {
+                        });
+                    }
+                }
+            });
+            return false;
+        });
+        form.on('submit(layuiadmin-app-form-submit)', function (obj) {
+            var field = obj.field;
+            $.ajax({
+                url: "{:url()}",    //请求的url地址
+                dataType: "json",   //返回格式为json
+                async: true,//请求是否异步，默认为异步，这也是ajax重要特性
+                type: "POST",   //请求方式
+                data: field,
+                success: function (ret) {
+                    if (ret.code == 1) {
+                        //登入成功的提示与跳转
+                        layer.msg(ret.msg, {offset: 'auto', icon: 1, time: 2000}, function () {
+                            //判断列表页是否使用table 如果没有则刷新treeTable
+                            if (parent.layui.table.index == 1) {
+                                parent.layui.table.reload('LAY-app-content-list');
+                            } else {
+                                parent.layui.treeTable.reload('LAY-app-content-list');
+                            }
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index); //再执行关闭
+                        });
+                    } else {
+                        layer.msg(ret.msg, {offset: 'auto', icon: 2, time: 2000, anim: 6}, function () {
+                        });
+                    }
+                }
+            });
+            return false;
+        });
+    })
+</script>
+</body>
+</html>
