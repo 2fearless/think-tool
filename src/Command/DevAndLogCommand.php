@@ -93,8 +93,8 @@ class DevAndLogCommand extends \think\console\Command
         if ($done){
             return;
         }
-        $content = str_replace('// 添加自定义异常处理机制',"// 添加自定义异常处理机制'\r\n".$str,$content);
-        file_put_contents($file,$content);
+        $content2 = str_replace('// 添加自定义异常处理机制',"// 添加自定义异常处理机制'\r\n".$str,$content);
+        file_put_contents($file,$content2);
     }
 
     public function buryApiLog(){
@@ -116,11 +116,11 @@ class DevAndLogCommand extends \think\console\Command
 }';
         $file = app()->getAppPath().DIRECTORY_SEPARATOR.'api'.DIRECTORY_SEPARATOR.'middleware'.DIRECTORY_SEPARATOR.'CheckToken.php';
         $content = file_get_contents($file);
-        $done = \think\helper\Str::contains($append,'function end');
+        $done = \think\helper\Str::contains($content,'SysApilog');
         if ($done){
             return;
         }
-        $content = substr($content,0,strlen($content)-3).$append;
-        file_put_contents($file,$content);
+        $content2 = substr($content,0,strlen($content)-3).$append;
+        file_put_contents($file,$content2);
     }
 }
