@@ -98,7 +98,7 @@ class DevAndLogCommand extends \think\console\Command
         if ($done){
             return;
         }
-        $content2 = str_replace('// 添加自定义异常处理机制',"// 添加自定义异常处理机制'\r\n".$str,$content);
+        $content2 = str_replace('// 添加自定义异常处理机制',"// 添加自定义异常处理机制".PHP_EOL.$str,$content);
         file_put_contents($file,$content2);
         $output->writeln('完成修改异常提示文件'.$file);
     }
@@ -126,7 +126,7 @@ class DevAndLogCommand extends \think\console\Command
         if ($done){
             return;
         }
-        $content2 = substr($content,0,strlen($content)-3).$append;
+        $content2 = substr($content,0,strlen($content)-3).PHP_EOL.$append;
         file_put_contents($file,$content2);
         $output->writeln('完成中间件埋点'.$file);
     }
