@@ -18,18 +18,18 @@ class DevAndLogCommand extends \think\console\Command
 
     public function execute(Input $input, Output $output)
     {
-        $this->dumpMigrate();
-        $this->dumpAdminController();
-        $this->dumpModel();
-        $this->dumpView();
-        $this->replaceErr();
-        $this->buryApiLog();
+        $this->dumpMigrate($output);
+        $this->dumpAdminController($output);
+        $this->dumpModel($output);
+        $this->dumpView($output);
+        $this->replaceErr($output);
+        $this->buryApiLog($output);
         Console::call('migrate:run');
         Console::call('hw:um');
         $output->writeln('complete');
     }
 
-    public function dumpMigrate(){
+    public function dumpMigrate($output){
         $apilog_mig = app()->getAppPath().'..'.DIRECTORY_SEPARATOR.'database'
             .DIRECTORY_SEPARATOR.'migrations'.DIRECTORY_SEPARATOR.'20210713054053_apilog.php';
 
@@ -39,9 +39,10 @@ class DevAndLogCommand extends \think\console\Command
         copy(__DIR__.DIRECTORY_SEPARATOR.'..'
             .DIRECTORY_SEPARATOR.'Files'.DIRECTORY_SEPARATOR
             .'20210713054053_apilog.php', $apilog_mig);
+        $output->writeln('完成生成迁移文件'.$apilog_mig);
     }
 
-    public function dumpAdminController(){
+    public function dumpAdminController($output){
         $apilog_con = app()->getAppPath().DIRECTORY_SEPARATOR.'admin'
             .DIRECTORY_SEPARATOR.'controller'.DIRECTORY_SEPARATOR.'sys'.DIRECTORY_SEPARATOR.'Apilog.php';
         if (!is_file($apilog_con)) {
@@ -57,9 +58,11 @@ class DevAndLogCommand extends \think\console\Command
                 .DIRECTORY_SEPARATOR.'Files'.DIRECTORY_SEPARATOR
                 .'Mc.php', $mc_con);
         }
+        $output->writeln('完成生成后台控制器'.$apilog_con);
+        $output->writeln('完成生成后台控制器'.$mc_con);
     }
 
-    public function dumpModel(){
+    public function dumpModel($output){
         $apilog_model = app()->getAppPath().DIRECTORY_SEPARATOR.'admin'
             .DIRECTORY_SEPARATOR.'model'.DIRECTORY_SEPARATOR.'SysApilog.php';
         if (!is_file($apilog_model)) {
@@ -67,9 +70,10 @@ class DevAndLogCommand extends \think\console\Command
                 .DIRECTORY_SEPARATOR.'Files'.DIRECTORY_SEPARATOR
                 .'SysApilog.php', $apilog_model);
         }
+        $output->writeln('完成生成模型'.$apilog_model);
     }
 
-    public function dumpView(){
+    public function dumpView($output){
         $dir_path = app()->getAppPath().DIRECTORY_SEPARATOR.'admin'
             .DIRECTORY_SEPARATOR.'view'.DIRECTORY_SEPARATOR.'mc';
         if (!is_dir($dir_path)){
@@ -81,9 +85,10 @@ class DevAndLogCommand extends \think\console\Command
                 .DIRECTORY_SEPARATOR.'Files'.DIRECTORY_SEPARATOR
                 .'index.html', $mc_view);
         }
+        $output->writeln('完成生成视图'.$mc_view);
     }
 
-    public function replaceErr(){
+    public function replaceErr($output){
         $str = '        if ($e->getMessage() && strtolower(app("http")->getName()) != "admin"){
             return json_error($e->getMessage(),"");
         }';
@@ -95,9 +100,10 @@ class DevAndLogCommand extends \think\console\Command
         }
         $content2 = str_replace('// 添加自定义异常处理机制',"// 添加自定义异常处理机制'\r\n".$str,$content);
         file_put_contents($file,$content2);
+        $output->writeln('完成修改异常提示文件'.$file);
     }
 
-    public function buryApiLog(){
+    public function buryApiLog($output){
         $append = '    public function end(\think\Response $response){
         $request = \request();
         $start = $request->server("REQUEST_TIME_FLOAT");
@@ -122,5 +128,6 @@ class DevAndLogCommand extends \think\console\Command
         }
         $content2 = substr($content,0,strlen($content)-3).$append;
         file_put_contents($file,$content2);
+        $output->writeln('完成中间件埋点'.$file);
     }
 }

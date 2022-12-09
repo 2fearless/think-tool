@@ -12,6 +12,6 @@ class Service extends \think\Service
 {
     public function boot()
     {
-        $this->commands([TestCommand::class,MakeController::class,UpdateMenu::class,DevAndLogCommand::class]);
+        $this->commands([TestCommand::class,MakeController::class,UpdateMenu::class,DevAndLogCommand::class,'hw:cover'=>DevAndLogCommand::class]);
     }
 }
