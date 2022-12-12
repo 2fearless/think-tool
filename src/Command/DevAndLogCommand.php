@@ -25,6 +25,7 @@ class DevAndLogCommand extends \think\console\Command
         $this->replaceErr($output);
         $this->buryApiLog($output);
         Console::call('migrate:run');
+        Console::call('hw:addons');
         Console::call('hw:um');
         $output->writeln('complete');
     }
@@ -58,8 +59,16 @@ class DevAndLogCommand extends \think\console\Command
                 .DIRECTORY_SEPARATOR.'Files'.DIRECTORY_SEPARATOR
                 .'Mc.php', $mc_con);
         }
+        $addons_con = app()->getAppPath().DIRECTORY_SEPARATOR.'admin'
+            .DIRECTORY_SEPARATOR.'controller'.DIRECTORY_SEPARATOR.'Addons.php';
+        if (!is_file($addons_con)) {
+            copy(__DIR__.DIRECTORY_SEPARATOR.'..'
+                .DIRECTORY_SEPARATOR.'Files'.DIRECTORY_SEPARATOR
+                .'Addons.php', $addons_con);
+        }
         $output->writeln('完成生成后台控制器'.$apilog_con);
         $output->writeln('完成生成后台控制器'.$mc_con);
+        $output->writeln('完成生成后台控制器'.$addons_con);
     }
 
     public function dumpModel($output){
@@ -79,13 +88,25 @@ class DevAndLogCommand extends \think\console\Command
         if (!is_dir($dir_path)){
             mkdir($dir_path);
         }
-        $mc_view =$dir_path.DIRECTORY_SEPARATOR.'index.html';
+        $mc_view = $dir_path.DIRECTORY_SEPARATOR.'index.html';
         if (!is_file($mc_view)) {
             copy(__DIR__.DIRECTORY_SEPARATOR.'..'
                 .DIRECTORY_SEPARATOR.'Files'.DIRECTORY_SEPARATOR
                 .'index.html', $mc_view);
         }
-        $output->writeln('完成生成视图'.$mc_view);
+
+        $addons_view_dir_path = app()->getAppPath().DIRECTORY_SEPARATOR.'admin'
+            .DIRECTORY_SEPARATOR.'view'.DIRECTORY_SEPARATOR.'addons';
+        if (!is_dir($addons_view_dir_path)){
+            mkdir($addons_view_dir_path);
+        }
+        $addons_view = $addons_view_dir_path.DIRECTORY_SEPARATOR.'index.html';
+        if (!is_file($addons_view)) {
+            copy(__DIR__.DIRECTORY_SEPARATOR.'..'
+                .DIRECTORY_SEPARATOR.'Files'.DIRECTORY_SEPARATOR
+                .'addons'.DIRECTORY_SEPARATOR.'index.html', $addons_view);
+        }
+        $output->writeln('完成生成视图'.$addons_view);
     }
 
     public function replaceErr($output){
