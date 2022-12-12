@@ -3,9 +3,9 @@
 
 namespace Fearless\ThinkTool\Service;
 
-use app\command\Install;
 use Fearless\ThinkTool\Command\AddAddonsDir;
 use Fearless\ThinkTool\Command\DevAndLogCommand;
+use Fearless\ThinkTool\Command\Install;
 use Fearless\ThinkTool\Command\MakeController;
 use Fearless\ThinkTool\Command\TestCommand;
 use Fearless\ThinkTool\Command\UpdateMenu;

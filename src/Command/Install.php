@@ -1,7 +1,7 @@
 <?php
 declare (strict_types = 1);
 
-namespace app\command;
+namespace Fearless\ThinkTool\Command;
 
 use think\console\Command;
 use think\console\Input;

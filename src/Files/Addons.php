@@ -16,6 +16,14 @@ class Addons extends HwController
        return json_ok('安装'.$module.'完成');
     }
 
+    public function index(){
+        if (request()->isPost()){
+            return json_error('参数错误');
+        }
+        $a = 123;
+        return view('',compact('a'));
+    }
+
     public function list(){
         $path = root_path('addons');
         if (!is_dir($path)){
