@@ -15,7 +15,7 @@ class Service extends \think\Service
     public function boot()
     {
         $commands = [TestCommand::class,MakeController::class,UpdateMenu::class,DevAndLogCommand::class,'hw:cover'=>DevAndLogCommand::class];
-        if (!isset(Console::all()['hw:addons'])){
+        if (!isset(Console::all()['hw:install'])){
             $commands[] = Install::class;
         }
         $this->commands($commands);
