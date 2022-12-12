@@ -104,7 +104,7 @@ class DevAndLogCommand extends \think\console\Command
         if (!is_file($addons_view)) {
             copy(__DIR__.DIRECTORY_SEPARATOR.'..'
                 .DIRECTORY_SEPARATOR.'Files'.DIRECTORY_SEPARATOR
-                .'addons'.DIRECTORY_SEPARATOR.'index.html', $addons_view);
+                .'addons_view'.DIRECTORY_SEPARATOR.'index.html', $addons_view);
         }
         $output->writeln('完成生成视图'.$addons_view);
     }
