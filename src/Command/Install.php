@@ -115,6 +115,9 @@ class Install extends Command
 
     protected function moveFrontModule(){
         $dir = $this->module_dir.'front'.DIRECTORY_SEPARATOR.'controller';
+        if (!is_dir($dir)){
+            return;
+        }
         $files = scandir($dir);
         $except = $this->except;
         foreach ($files as $file){

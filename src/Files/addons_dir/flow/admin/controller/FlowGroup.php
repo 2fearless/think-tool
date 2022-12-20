@@ -181,8 +181,12 @@ class FlowGroup extends HwController
                 $node['next_id'] = [];
             }
         }
+        $has_project = FlowProject::where('flow_group_id',input('id'))->find();
+        if ($has_project){
+            $has_project = true;
+        }
 //        dd($nodes);
-        return view('', compact('departs', 'roles', 'model', 'nodes'));
+        return view('', compact('departs', 'roles', 'model', 'nodes','has_project'));
     }
 
 }
