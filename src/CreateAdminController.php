@@ -58,11 +58,11 @@ class CreateAdminController extends CommonScaffold
                 $str .= '$this->addColumnId();'."\n";
             }else{
                 if ($item['number']){
-                    $str .= "\t\t\t".'$this->addColumn(\''.$item['field'].'\', \''.$item['comment'].'\')->sort()->add($require)->edit($require)->form_type_number()->form_width(2);'."\n";
+                    $str .= "\t\t\t".'$this->addColumn(\''.$item['field'].'\', \''.$item['comment']?:$item['field'].'\')->sort()->add($require)->edit($require)->form_type_number()->form_width(2);'."\n";
                 }else{
-                    $str .= "\t\t\t".'$this->addColumn(\''.$item['field'].'\', \''.$item['comment'].'\')->add($require)->edit($require)->form_width(2);'."\n";
+                    $str .= "\t\t\t".'$this->addColumn(\''.$item['field'].'\', \''.$item['comment']?:$item['field'].'\')->add($require)->edit($require)->form_width(2);'."\n";
                 }
-                $valid .= "\t\t\t\t'".$item['field'].'|'.$item['comment']."' => 'require',"."\n";
+                $valid .= "\t\t\t\t'".$item['field'].'|'.$item['comment']?:$item['field']."' => 'require',"."\n";
             }
         }
         $stub = str_replace('Field', $str, $stub);
