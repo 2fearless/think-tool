@@ -1,0 +1,318 @@
+<link rel="stylesheet" href="/static/tdesign/tdesign.min.css"/>
+<script src="/static/tdesign/vue.js"></script>
+<script src="/static/tdesign/vue-composition-api.prod.js"></script>
+<script src="/static/tdesign/tdesign.min.js"></script>
+<script src="/static/tdesign/g6.js"></script>
+<script src="/static/tdesign/jquery-3.2.1.min.js"></script>
+<script src="/static/tdesign/dagre.min.js"></script>
+<script src="/static/tdesign/axios.min.js"></script>
+<style>
+    #mountNode {
+        position: absolute;
+    }
+</style>
+<div id="app">
+    <template>
+        <div style="display: flex;flex-direction: row">
+            <div style="width: 50vw">
+                <div>{{project_name}}</div>
+                <div id="mountNode"></div>
+            </div>
+            <div style="width: 50vw">
+                <div>流程细节</div>
+                <t-collapse>
+                    <t-collapse-panel v-for="i in steps" :header="'['+i.user.nickname+']完成['+i.node.name+']'">
+                        {{i.remark}}
+                        <a :href="i.file" target="_blank">
+                            查看文件
+                        </a>
+                    </t-collapse-panel>
+                </t-collapse>
+            </div>
+        </div>
+
+    </template>
+</div>
+<script>
+    const vm = new Vue({
+        el: '#app',
+        data() {
+            return {
+                message: 'Hello Vue!',
+                node_title: '',
+                project_name:'{$project_name}',
+                node_sort: 1,
+                visible: false,
+                tab: 2,
+                form: {
+                    type: '项目管理类',
+                    code: '',
+                    name: '',
+                    desc: '',
+                    relate_name: '',
+                    relate_model: '',
+                    status: 0,
+                },
+                select: 0,
+                nodes: [],
+                steps: [],
+                node_draw: {
+                    nodes: [],
+                    edges: []
+                },
+                departs: [],
+                roles: [],
+                graph: null,
+                g: null
+            }
+        },
+        created() {
+            this.nodes = JSON.parse('{$nodes}'.replace(/&quot;/g, '"'))
+            let model = '{$model}'.replace(/\\/g, '\\\\')
+            this.form = JSON.parse(model.replace(/&quot;/g, '"'))
+
+            this.steps = {:json_encode($steps,JSON_UNESCAPED_UNICODE)};
+        },
+        methods: {
+            close() {
+                const index = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(index); //再执行关闭
+            },
+            submit() {
+                axios({
+                    method: 'post',
+                    url: '{:url()}',
+                    data: {
+                        data: this.form,
+                        nodes: this.nodes
+                    }
+                }).then((res) => {
+                    if (res.data.code) {
+                        this.$message.success(res.data.msg);
+                        setTimeout(function () {
+                            const index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index); //再执行关闭
+                        }, 1000)
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                });
+            },
+            sortNode(sort) {
+                function mysort(a, b) {
+                    if (a.sort !== b.sort) return a.sort - b.sort
+                }
+
+                this.nodes.sort(mysort)
+                let that = this
+                this.nodes.forEach(function (node, i, array) {
+                    if (node.sort == sort) {
+                        that.select = i
+                    }
+                })
+            },
+
+            editNode(e) {
+                let that = this
+                this.nodes.forEach(function (node, i, array) {
+                    if (node.sort == e.sort) {
+                        that.select = i
+                    }
+                })
+
+            },
+            onChange(checkedValues) {
+                console.log('checkedValues:', this.form.status, checkedValues);
+            },
+            addNode() {
+                this.visible = true
+                this.node_title = ''
+                this.node_sort = 1
+                if (this.nodes.length) {
+                    this.node_sort = this.nodes[this.nodes.length - 1].sort + 10
+                }
+            },
+            delNode() {
+                this.nodes.splice(this.select, 1)
+                this.sortNode()
+                this.select = this.nodes.length - 1
+                this.draw_show()
+            },
+            onConfirm() {
+                let sort = this.node_sort
+                let title = this.node_title
+                if (!title || !sort) {
+                    this.$message.error('标题和排序必填');
+                    return
+                }
+                let err = 0
+                this.nodes.forEach(function (node, i, array) {
+                    if (node.id == title) {
+                        err = 1
+                    }
+                    if (node.sort == sort) {
+                        err = 1
+                    }
+                })
+                if (err) {
+                    this.$message.error('标题或排序重复');
+                    return
+                }
+                let node = {
+                    name: this.node_title,
+                    sort: sort,
+                    id: this.node_title,
+                    label: this.node_title,
+                    value: this.node_title,
+                    finish: '0',
+                    depart_id: 1,
+                    role_id: 1,
+                    word_template: '',
+                    if_remark: '0',
+                    if_file: '0',
+                    next_id: []
+                }
+                this.nodes.push(node)
+                this.sortNode()
+                this.visible = false
+                this.sort_node_draw()
+                let that = this
+                this.nodes.forEach(function (node, i, array) {
+                    if (node.sort == sort) {
+                        that.select = i
+                    }
+                })
+                this.drawFlow()
+            },
+            sort_node_draw() {
+                let edges = []
+                let len = this.nodes.length
+                this.nodes.forEach(function (node, i, array) {
+                    if (i + 1 < len) {
+                        if (node.next_id.length === 0) {
+                            edges.push({source: node.id, target: array[i + 1].id})
+                        } else {
+                            node.next_id.forEach(function (next_node) {
+                                edges.push({source: node.id, target: next_node})
+                            })
+                        }
+                    }
+                })
+                this.node_draw = {
+                    nodes: this.nodes,
+                    edges
+                }
+            },
+            draw_show() {
+                this.sort_node_draw()
+                this.drawFlow()
+            },
+            drawFlow() {
+                let that = this
+                const data = that.node_draw;
+                that.g = new dagre.graphlib.Graph();
+
+                that.g.setDefaultEdgeLabel(function () {
+                    return {};
+                });
+                that.g.setGraph({
+                    rankdir: 'TB'
+                });
+
+                data.nodes.forEach(function (node) {
+                    node.label = node.id;
+                    that.g.setNode(node.id, {
+                        width: 150,
+                        height: 50,
+                    });
+                });
+                data.edges.forEach(function (edge) {
+                    that.g.setEdge(edge.source, edge.target);
+                });
+                dagre.layout(that.g);
+                let coord = void 0;
+
+                that.g.nodes().forEach(function (node, i) {
+                    coord = that.g.node(node);
+                    data.nodes[i].x = coord.x;
+                    data.nodes[i].y = coord.y;
+                });
+                that.g.edges().forEach(function (edge, i) {
+                    coord = that.g.edge(edge);
+                    data.edges[i].startPoint = coord.points[0];
+                    data.edges[i].endPoint = coord.points[coord.points.length - 1];
+                    data.edges[i].controlPoints = coord.points.slice(1, coord.points.length - 1);
+                });
+                if (!that.graph) {
+                    G6.registerNode('operation', {
+                        drawShape: function drawShape(cfg, group) {
+                            const rect = group.addShape('rect', {
+                                attrs: {
+                                    x: -75,
+                                    y: -25,
+                                    width: 150,
+                                    height: 50,
+                                    radius: 10,
+                                    stroke: '#00C0A5',
+                                    fill: '#92949F',
+                                    fillOpacity: 0.45,
+                                    lineWidth: 2
+                                }
+                            });
+                            return rect;
+                        }
+                    }, 'single-shape');
+                    that.graph = new G6.Graph({
+                        container: 'mountNode',
+                        width: window.innerWidth / 3,
+                        height: window.innerHeight * 0.8,
+                        pixelRatio: 2,
+                        modes: {
+                            default: ['drag-canvas', 'zoom-canvas']
+                        },
+                        defaultNode: {
+                            shape: 'operation',
+                            labelCfg: {
+                                style: {
+                                    fill: '#666',
+                                    fontSize: 14,
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        defaultEdge: {
+                            shape: 'polyline',
+                            style: {
+                                endArrow: true,
+                                lineWidth: 2,
+                                stroke: '#ccc'
+                            }
+                        }
+                    });
+                }
+                that.graph.data(data);
+                that.graph.render();
+                that.graph.fitView();
+            },
+        },
+        mounted() {
+            // this.loadFlow()
+            // this.$refs.formValidatorStatus.validate();
+        },
+        watch: {
+            nodes: {
+                handler(newValue, oldValue) {
+
+                    // 注意：在嵌套的变更中，
+                    // 只要没有替换对象本身，
+                    // 那么这里的 `newValue` 和 `oldValue` 相同
+                    if (this.tab === 2) {
+                        this.draw_show()
+                    }
+                },
+                deep: true
+            }
+        }
+    });
+
+</script>

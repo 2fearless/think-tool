@@ -1,0 +1,516 @@
+<link rel="stylesheet" href="/static/tdesign/tdesign.min.css"/>
+<script src="/static/tdesign/vue.js"></script>
+<script src="/static/tdesign/vue-composition-api.prod.js"></script>
+<script src="/static/tdesign/tdesign.min.js"></script>
+<script src="/static/tdesign/g6.js"></script>
+<script src="/static/tdesign/jquery-3.2.1.min.js"></script>
+<script src="/static/tdesign/dagre.min.js"></script>
+<script src="/static/tdesign/axios.min.js"></script>
+<style>
+    #mountNode {
+        position: absolute;
+    }
+</style>
+<div id="app">
+    <template>
+        <t-tabs v-model="tab">
+            <t-tab-panel style="margin-top: 30px" :value="1" label="流程基础信息">
+                <t-form :preventSubmitDefault="false"
+                        :showErrorMessage="false"
+                >
+                    <t-form-item label="流程分类" name="type" initialData="TDesign">
+                        <t-select
+                                v-model="form.type"
+                                placeholder="-请选择-"
+                                :options="options"
+                                style="width: 200px; display: inline-block; margin: 0 20px 20px 0"
+                                filterable
+                        />
+                    </t-form-item>
+                    <t-form-item label="流程编号" name="code" initialData="123456">
+                        <t-input placeholder="请输入内容" v-model="form.code"/>
+                    </t-form-item>
+                    <t-form-item label="流程名称(必填)" label="失败" name="fail" name="name" initialData="123456">
+                        <t-input placeholder="请输入内容" v-model="form.name"/>
+                    </t-form-item>
+                    <t-form-item label="流程描述" label="失败" name="fail" name="name" initialData="123456">
+                        <t-input placeholder="请输入内容" v-model="form.desc"/>
+                    </t-form-item>
+                    <t-form-item label="所属应用" label="失败" name="fail" name="name" initialData="123456">
+                        <t-input placeholder="请输入内容" v-model="form.relate_name"/>
+                    </t-form-item>
+                    <t-form-item label="模型命名空间" label="失败" name="fail" name="name" initialData="123456">
+                        <t-input placeholder="请输入内容" v-model="form.relate_model"/>
+                    </t-form-item>
+                    <t-form-item label="状态" label="失败" name="fail" name="name" initialData="123456">
+                        <t-radio-group name="status" v-model="form.status" :options="status_options"></t-radio-group>
+                    </t-form-item>
+                </t-form>
+            </t-tab-panel>
+            <t-tab-panel :value="2" label="节点配置">
+                <div style="display: flex;justify-content:space-between">
+                    <div>
+                        <div style="position: relative;left: 10%">
+                            <t-button theme="primary" variant="text" @click="addNode">
+                                + 添加节点
+                            </t-button>
+                        </div>
+                        <t-space direction="vertical" v-if="nodes.length">
+                            <t-button theme="warning" @click="editNode(i)" v-for="i in nodes" size="medium">{{i.id}}
+                            </t-button>
+                        </t-space>
+                    </div>
+                    <div>
+                        <div>流程图</div>
+                        <t-card bordered v-show="nodes.length">
+                            <div id="mountNode"></div>
+                        </t-card>
+                    </div>
+                    <div>
+                        <t-form :preventSubmitDefault="false"
+                                :showErrorMessage="false"
+                                labelAlign="left"
+                                v-if="nodes.length"
+                        >
+                            <t-form-item label="节点名称" name="type" initialData="TDesign">
+                                <t-input placeholder="请输入内容" v-model="nodes[select].id"/>
+                            </t-form-item>
+                            <t-form-item label="人员部门" name="type" initialData="TDesign">
+                                <t-select
+                                        v-model="nodes[select].depart_id"
+                                        placeholder="-部门-"
+                                        :options="departs"
+                                        style="width: 200px; display: inline-block; margin: 0 20px 20px 0"
+                                        filterable
+                                />
+                            </t-form-item>
+                            <t-form-item label="人员角色" name="type" initialData="TDesign">
+                                <t-select
+                                        v-model="nodes[select].role_id"
+                                        placeholder="-角色-"
+                                        :options="roles"
+                                        style="width: 200px; display: inline-block; margin: 0 20px 20px 0"
+                                        filterable
+                                />
+                            </t-form-item>
+                            <t-form-item label="下个节点" name="type" initialData="TDesign">
+                                <t-select
+                                        v-model="nodes[select].next_id"
+                                        placeholder="-节点-"
+                                        :options="nodes"
+                                        style="width: 200px; display: inline-block; margin: 0 20px 20px 0"
+                                        filterable
+                                        multiple
+                                />
+                            </t-form-item>
+                            <t-form-item label="是否可结束流程" name="type" initialData="TDesign">
+                                <t-radio-group v-model="nodes[select].finish">
+                                    <t-radio value="1">是</t-radio>
+                                    <t-radio value="0">否</t-radio>
+                                </t-radio-group>
+                            </t-form-item>
+                            <t-form-item label="备注话术" help="换行输入第二句" name="description">
+                                <t-textarea v-model="nodes[select].word_template" placeholder="输入话术"></t-textarea>
+                            </t-form-item>
+                            <t-form-item label="审核批注备注" name="type" initialData="TDesign">
+                                <t-radio-group v-model="nodes[select].if_remark">
+                                    <t-radio value="1">是</t-radio>
+                                    <t-radio value="0">否</t-radio>
+                                </t-radio-group>
+                            </t-form-item>
+                            <t-form-item label="文件上传" name="type" initialData="TDesign">
+                                <t-radio-group v-model="nodes[select].if_file">
+                                    <t-radio value="1">是</t-radio>
+                                    <t-radio value="0">否</t-radio>
+                                </t-radio-group>
+                            </t-form-item>
+                            <t-form-item label="排序" name="type" initialData="TDesign">
+                                <t-input placeholder="请输入内容" @blur="sortNode(nodes[select].sort)"
+                                         v-model="nodes[select].sort"/>
+                            </t-form-item>
+                            <t-button theme="danger" type="button" @click="delNode()">删除节点</t-button>
+
+                        </t-form>
+                    </div>
+                </div>
+
+                <div>
+                    <t-dialog header="创建节点" mode="modal" draggable :visible.sync="visible" @confirm="onConfirm">
+                        <div slot="body">
+                            <t-space direction="vertical">
+                                <div>
+                                    <div>节点标题</div>
+                                    <t-input placeholder="请输入节点标题" v-model="node_title"/>
+                                </div>
+                                <div>
+                                    <div>节点排序</div>
+                                    <t-input placeholder="请输入节点排序" v-model="node_sort"/>
+                                </div>
+                            </t-space>
+                        </div>
+                    </t-dialog>
+                </div>
+            </t-tab-panel>
+        </t-tabs>
+        <t-space size="10px" style="margin-left: 80vw;top: 89vh;position: fixed">
+            <!-- type = submit，表单中的提交按钮，原生行为 -->
+            <t-button theme="primary" type="submit" @click="submit">提交</t-button>
+            <!-- type = reset，表单中的重置按钮，原生行为 -->
+            <t-button theme="default" variant="base" type="reset" @click="close">关闭</t-button>
+
+            <!-- 下方示例代码，有效，勿删 -->
+            <!-- <t-button theme="default" @click="submitForm">实例方法提交</t-button>
+            <t-button theme="default" variant="base" @click="resetForm">实例方法重置</t-button>
+            <t-button theme="default" variant="base" @click="validateOnly">校验</t-button> -->
+        </t-space>
+    </template>
+</div>
+<script>
+    const vm = new Vue({
+        el: '#app',
+        data() {
+            return {
+                message: 'Hello Vue!',
+                node_title: '',
+                node_sort: 1,
+                visible: false,
+                tab: 1,
+                form: {
+                    type: '项目管理类',
+                    code: '',
+                    name: '',
+                    desc: '',
+                    relate_name: '',
+                    relate_model: '',
+                    status: 0,
+                },
+                select: 0,
+                nodes: [],
+                options: [
+                    {label: '日常办公类', value: '日常办公类'},
+                    {label: '人事管理类', value: '人事管理类'},
+                    {label: '项目管理类', value: '项目管理类'},
+                    {label: '财务管理类', value: '财务管理类'},
+                    {label: '供应链管理类', value: '供应链管理类'},
+                    {label: '生产管理类', value: '生产管理类'},
+                    {label: '客户管理类', value: '客户管理类'}
+                ],
+                status_options: [
+                    {
+                        value: 0,
+                        label: '草稿',
+                    },
+                    {
+                        value: 1,
+                        label: '启用',
+                    },
+                    {
+                        value: 2,
+                        label: '禁用',
+                    },
+                    {
+                        value: 3,
+                        label: '暂停',
+                    },
+                ],
+                node_draw: {
+                    nodes: [{
+                        id: '收集日志'
+                    }, {
+                        id: '入 es 集群'
+                    }, {
+                        id: '入 hdfs'
+                    }, {
+                        id: 'hive 计算'
+                    }, {
+                        id: 'report'
+                    }],
+                    edges: [{
+                        source: '收集日志',
+                        target: '入 es 集群'
+                    }, {
+                        source: '收集日志',
+                        target: '入 hdfs'
+                    }, {
+                        source: '入 hdfs',
+                        target: 'hive 计算'
+                    }, {
+                        source: '入 es 集群',
+                        target: 'hive 计算'
+                    }, {
+                        source: 'hive 计算',
+                        target: 'report'
+                    }]
+                },
+                departs: [],
+                roles: [],
+                graph: null,
+                g: null
+            }
+        },
+        created() {
+            let model = '{$model}'.replace(/\\/g, '\\\\')
+            this.form = JSON.parse(model.replace(/&quot;/g, '"'))
+            this.departs = JSON.parse('{$departs}'.replace(/&quot;/g, '"'))
+            this.roles = JSON.parse('{$roles}'.replace(/&quot;/g, '"'))
+            this.nodes = JSON.parse('{$nodes}'.replace(/&quot;/g, '"'))
+        },
+        methods: {
+            close() {
+                const index = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(index); //再执行关闭
+            },
+            submit() {
+                axios({
+                    method: 'post',
+                    url: '{:url()}',
+                    data: {
+                        data: this.form,
+                        nodes: this.nodes
+                    }
+                }).then((res) => {
+                    if (res.data.code) {
+                        this.$message.success(res.data.msg);
+                        setTimeout(function (){
+                            if (parent.layui.table.index == 1) {
+                                parent.layui.table.reload('LAY-app-content-list');
+                            } else {
+                                parent.layui.treeTable.reload('LAY-app-content-list');
+                            }
+                            const index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index); //再执行关闭
+                        },2000)
+                    } else {
+                        this.$message.error(res.data.msg);
+                    }
+                });
+            },
+            sortNode(sort) {
+                function mysort(a, b) {
+                    if (a.sort !== b.sort) return a.sort - b.sort
+                }
+
+                this.nodes.sort(mysort)
+                let that = this
+                this.nodes.forEach(function (node, i, array) {
+                    if (node.sort == sort) {
+                        that.select = i
+                    }
+                })
+            },
+
+            editNode(e) {
+                let that = this
+                this.nodes.forEach(function (node, i, array) {
+                    if (node.sort == e.sort) {
+                        that.select = i
+                    }
+                })
+
+            },
+            onChange(checkedValues) {
+                console.log('checkedValues:', this.form.status, checkedValues);
+            },
+            addNode() {
+                this.visible = true
+                this.node_title = ''
+                this.node_sort = 1
+                if (this.nodes.length) {
+                    this.node_sort = this.nodes[this.nodes.length - 1].sort + 10
+                }
+            },
+            delNode() {
+                this.nodes.splice(this.select, 1)
+                this.sortNode()
+                this.select = this.nodes.length - 1
+                this.draw_show()
+            },
+            onConfirm() {
+                let sort = this.node_sort
+                let title = this.node_title
+                if (!title || !sort) {
+                    this.$message.error('标题和排序必填');
+                    return
+                }
+                let err = 0
+                this.nodes.forEach(function (node, i, array) {
+                    if (node.id == title) {
+                        err = 1
+                    }
+                    if (node.sort == sort) {
+                        err = 1
+                    }
+                })
+                if (err) {
+                    this.$message.error('标题或排序重复');
+                    return
+                }
+                let node = {
+                    name: this.node_title,
+                    sort: sort,
+                    id: this.node_title,
+                    label: this.node_title,
+                    value: this.node_title,
+                    finish: '0',
+                    depart_id: 1,
+                    role_id: 1,
+                    word_template: '',
+                    if_remark: '0',
+                    if_file: '0',
+                    next_id: []
+                }
+                this.nodes.push(node)
+                this.sortNode()
+                this.visible = false
+                this.sort_node_draw()
+                let that = this
+                this.nodes.forEach(function (node, i, array) {
+                    if (node.sort == sort) {
+                        that.select = i
+                    }
+                })
+                this.drawFlow()
+            },
+            sort_node_draw() {
+                let edges = []
+                let len = this.nodes.length
+                this.nodes.forEach(function (node, i, array) {
+                    if (i + 1 < len) {
+                        if (node.next_id.length === 0) {
+                            edges.push({source: node.id, target: array[i + 1].id})
+                        } else {
+                            node.next_id.forEach(function (next_node) {
+                                edges.push({source: node.id, target: next_node})
+                            })
+                        }
+                    }
+                })
+                this.node_draw = {
+                    nodes: this.nodes,
+                    edges
+                }
+            },
+            draw_show() {
+                this.sort_node_draw()
+                this.drawFlow()
+            },
+            drawFlow() {
+                let that = this
+                const data = that.node_draw;
+                that.g = new dagre.graphlib.Graph();
+
+                that.g.setDefaultEdgeLabel(function () {
+                    return {};
+                });
+                that.g.setGraph({
+                    rankdir: 'TB'
+                });
+
+                data.nodes.forEach(function (node) {
+                    node.label = node.id;
+                    that.g.setNode(node.id, {
+                        width: 150,
+                        height: 50,
+                    });
+                });
+                data.edges.forEach(function (edge) {
+                    that.g.setEdge(edge.source, edge.target);
+                });
+                dagre.layout(that.g);
+                let coord = void 0;
+
+                that.g.nodes().forEach(function (node, i) {
+                    coord = that.g.node(node);
+                    data.nodes[i].x = coord.x;
+                    data.nodes[i].y = coord.y;
+                });
+                that.g.edges().forEach(function (edge, i) {
+                    coord = that.g.edge(edge);
+                    data.edges[i].startPoint = coord.points[0];
+                    data.edges[i].endPoint = coord.points[coord.points.length - 1];
+                    data.edges[i].controlPoints = coord.points.slice(1, coord.points.length - 1);
+                });
+                if (!that.graph) {
+                    G6.registerNode('operation', {
+                        drawShape: function drawShape(cfg, group) {
+                            const rect = group.addShape('rect', {
+                                attrs: {
+                                    x: -75,
+                                    y: -25,
+                                    width: 150,
+                                    height: 50,
+                                    radius: 10,
+                                    stroke: '#00C0A5',
+                                    fill: '#92949F',
+                                    fillOpacity: 0.45,
+                                    lineWidth: 2
+                                }
+                            });
+                            return rect;
+                        }
+                    }, 'single-shape');
+                    that.graph = new G6.Graph({
+                        container: 'mountNode',
+                        width: window.innerWidth / 3,
+                        height: window.innerHeight * 0.8,
+                        pixelRatio: 2,
+                        modes: {
+                            default: ['drag-canvas', 'zoom-canvas']
+                        },
+                        defaultNode: {
+                            shape: 'operation',
+                            labelCfg: {
+                                style: {
+                                    fill: '#666',
+                                    fontSize: 14,
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        defaultEdge: {
+                            shape: 'polyline',
+                            style: {
+                                endArrow: true,
+                                lineWidth: 2,
+                                stroke: '#ccc'
+                            }
+                        }
+                    });
+                }
+                that.graph.data(data);
+                that.graph.render();
+                that.graph.fitView();
+            },
+        },
+        mounted() {
+            // this.loadFlow()
+            // this.$refs.formValidatorStatus.validate();
+        },
+        watch: {
+            tab: function (index) {
+                if (this.tab === 2) {
+                    this.g = null
+                    this.graph = null
+                    if (this.nodes.length) {
+                        setTimeout(() =>
+                                this.draw_show()
+                            , 1000)
+                    }
+                }
+            },
+            nodes: {
+                handler(newValue, oldValue) {
+
+                    // 注意：在嵌套的变更中，
+                    // 只要没有替换对象本身，
+                    // 那么这里的 `newValue` 和 `oldValue` 相同
+                    if (this.tab === 2) {
+                        this.draw_show()
+                    }
+                },
+                deep: true
+            }
+        }
+    });
+
+</script>

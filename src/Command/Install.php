@@ -67,6 +67,7 @@ class Install extends Command
         }
         $this->moveAdminModel();
         $this->moveAdminView();
+        $this->moveAdminStatic();
     }
 
     protected function moveAdminView(){
@@ -84,6 +85,19 @@ class Install extends Command
                         copy($dir.DIRECTORY_SEPARATOR.$file.DIRECTORY_SEPARATOR.$view, root_path('app/admin/view').$file.DIRECTORY_SEPARATOR.$view);
                     }
                 }
+            }
+        }
+    }
+    protected function moveAdminStatic(){
+        $dir = $this->module_dir.'admin'.DIRECTORY_SEPARATOR.'static';
+        if (!is_dir($dir)){
+            return;
+        }
+        $files = scandir($dir);
+        $except = $this->except;
+        foreach ($files as $file){
+            if (!in_array($file,$except) && is_dir($dir.DIRECTORY_SEPARATOR.$file)){
+                copyDir($dir.DIRECTORY_SEPARATOR.$file, root_path('public/static/'.$file));
             }
         }
     }
