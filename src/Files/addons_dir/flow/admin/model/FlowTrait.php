@@ -4,7 +4,6 @@ namespace app\admin\model;
 
 trait FlowTrait
 {
-
     public static function onBeforeInsert($model){
         $class = static::class;
         $group_id = FlowGroup::where('relate_model',$class)->value('id');
@@ -45,7 +44,7 @@ trait FlowTrait
         if (!$flow_step){
             $next = FlowNode::where('flow_group_id',$group_id)->whereIn('sort',json_decode($nodes[0]['next_id'],true))->column('id');
             $step = [
-                'remark' => '',
+                'remark' => '发布',
                 'flow_group_id' => $group_id,
                 'flow_node_id' => $nodes[0]['id'],
                 'finish_flag' => 0,

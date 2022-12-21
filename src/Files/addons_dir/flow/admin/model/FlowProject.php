@@ -16,7 +16,6 @@ class FlowProject extends Model
         "relate_model",
         "relate_id",
     ];
-
     public function project(){
         return $this->morphTo(self::$morph);
     }

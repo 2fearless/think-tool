@@ -16,6 +16,7 @@ use think\model\concern\SoftDelete;
 class FlowGroup extends Model
 {
     use SoftDelete;
+
     public function nodes(){
         return $this->hasMany(FlowNode::class,'flow_group_id')->order('sort','asc');
     }

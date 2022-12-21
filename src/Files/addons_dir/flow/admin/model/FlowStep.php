@@ -12,6 +12,13 @@ use think\model\concern\SoftDelete;
 class FlowStep extends Model
 {
     use SoftDelete;
+    public $append = [
+        'image_url'
+    ];
+    public function getImageUrlAttr()
+    {
+        return files_url($this->file);
+    }
     public function node(){
         return $this->belongsTo(FlowNode::class,'flow_node_id');
     }

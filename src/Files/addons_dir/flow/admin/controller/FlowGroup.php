@@ -185,7 +185,6 @@ class FlowGroup extends HwController
         if ($has_project){
             $has_project = true;
         }
-//        dd($nodes);
         return view('', compact('departs', 'roles', 'model', 'nodes','has_project'));
     }
 

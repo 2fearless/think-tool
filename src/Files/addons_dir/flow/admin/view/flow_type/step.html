@@ -23,9 +23,7 @@
                 <t-collapse>
                     <t-collapse-panel v-for="i in steps" :header="'['+i.user.nickname+']完成['+i.node.name+']'">
                         {{i.remark}}
-                        <a :href="i.file" target="_blank">
-                            查看文件
-                        </a>
+                        <t-image :src="p" v-for="p in i.image_url" fit="cover" :style="{ width: '120px', height: '120px' }" />
                     </t-collapse-panel>
                 </t-collapse>
             </div>
