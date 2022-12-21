@@ -36,6 +36,7 @@ class NewProject extends Migrator
         $table
             ->addColumn(Column::string('name')->setComment('名称'))
             ->addColumn(Column::integer('user_id')->setDefault(0)->setComment('用户id'))
+            ->addColumn(Column::timestamp('delete_time')->setNullable())
             ->addColumn(Column::timestamp('create_time')->setNullable())
             ->addColumn(Column::timestamp('update_time')->setNullable())
             ->create();

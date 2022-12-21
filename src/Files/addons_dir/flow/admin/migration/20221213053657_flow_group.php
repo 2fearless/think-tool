@@ -41,6 +41,7 @@ class FlowGroup extends Migrator
             ->addColumn(Column::string('relate_name')->setDefault('')->setComment('对应应用名称'))
             ->addColumn(Column::string('relate_model')->setDefault('')->setComment('对应应用模型'))
             ->addColumn(Column::tinyInteger('status')->setDefault(0)->setComment('0草稿/1启用/2弃用/3暂停'))
+            ->addColumn(Column::timestamp('delete_time')->setNullable())
             ->addColumn(Column::timestamp('create_time')->setNullable())
             ->addColumn(Column::timestamp('update_time')->setNullable())
             ->create();

@@ -40,6 +40,7 @@ class FlowProject extends Migrator
             ->addColumn(Column::integer('flow_node_id')->setDefault(0)->setComment('流程进度'))
             ->addColumn(Column::integer('flow_step_id')->setDefault(0)->setComment('当前进度'))
             ->addColumn(Column::integer('user_id')->setDefault(0)->setComment('用户id'))
+            ->addColumn(Column::timestamp('delete_time')->setNullable())
             ->addColumn(Column::timestamp('create_time')->setNullable())
             ->addColumn(Column::timestamp('update_time')->setNullable())
             ->create();

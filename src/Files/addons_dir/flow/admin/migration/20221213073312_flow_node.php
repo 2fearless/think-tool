@@ -45,7 +45,7 @@ class FlowNode extends Migrator
             ->addColumn(Column::tinyInteger('if_file')->setDefault(0)->setComment('是否上传文件'))
             ->addColumn(Column::integer('sort')->setDefault(0)->setComment('流程排序'))
             ->addColumn(Column::integer('level')->setDefault(0)->setComment('流程层级'))
-
+            ->addColumn(Column::timestamp('delete_time')->setNullable())
             ->addColumn(Column::timestamp('create_time')->setNullable())
             ->addColumn(Column::timestamp('update_time')->setNullable())
             ->create();

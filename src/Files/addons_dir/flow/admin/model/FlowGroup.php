@@ -8,13 +8,14 @@ use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
 use think\Exception;
 use think\Model;
+use think\model\concern\SoftDelete;
 
 /**
  * @mixin \think\Model
  */
 class FlowGroup extends Model
 {
-
+    use SoftDelete;
     public function nodes(){
         return $this->hasMany(FlowNode::class,'flow_group_id')->order('sort','asc');
     }

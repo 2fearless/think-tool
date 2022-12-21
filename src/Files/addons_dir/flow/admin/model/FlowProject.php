@@ -4,12 +4,14 @@ declare (strict_types=1);
 namespace app\admin\model;
 
 use think\Model;
+use think\model\concern\SoftDelete;
 
 /**
  * @mixin \think\Model
  */
 class FlowProject extends Model
 {
+    use SoftDelete;
     public static $morph = [
         "relate_model",
         "relate_id",

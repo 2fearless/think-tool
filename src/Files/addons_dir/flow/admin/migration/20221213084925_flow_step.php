@@ -44,6 +44,7 @@ class FlowStep extends Migrator
             ->addColumn(Column::integer('sort')->setComment('步骤'))
             ->addColumn(Column::integer('level')->setComment('层级'))
             ->addColumn(Column::integer('user_id')->setComment('用户id'))
+            ->addColumn(Column::timestamp('delete_time')->setNullable())
             ->addColumn(Column::timestamp('create_time')->setNullable())
             ->addColumn(Column::timestamp('update_time')->setNullable())
             ->create();
