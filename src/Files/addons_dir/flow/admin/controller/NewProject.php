@@ -44,7 +44,7 @@ class NewProject extends HwController
 
             $this->addColumnId();
             $this->addColumn('name', '名称')->add($require)->edit($require);
-            $this->addColumn('user_id', '用户id')->sort()->add($require)->edit($require)->form_type_number();
+            $this->addColumn('user_id', '用户')->form_type_select(SysUser::column('nickname','id'))->sort()->add($require)->edit($require);
             $this->addColumn('create_time', '创建时间');
             $this->addColumn('update_time', '更新时间');
 

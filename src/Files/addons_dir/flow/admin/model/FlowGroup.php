@@ -33,6 +33,9 @@ class FlowGroup extends Model
      * @throws Exception
      */
     public static function saveGroup($data, $nodes){
+        if (isset($data['delete_time'])){
+            unset($data['delete_time']);
+        }
         if (isset($data['id'])){
             if (self::where('relate_model',$data['relate_model'])->where('id','<>',$data['id'])->find() || self::where('name',$data['name'])->where('id','<>',$data['id'])->find()){
                 throw new Exception('已存在流程，请勿重复添加');
@@ -54,6 +57,9 @@ class FlowGroup extends Model
             $node['flow_group_id'] = $group->id;
             if (isset($node['id'])){
                 unset($node['id']);
+            }
+            if (isset($node['delete_time'])){
+                unset($node['delete_time']);
             }
             $node['next_id'] = json_encode($node['next_id']);
             FlowNode::create($node);
