@@ -260,6 +260,24 @@
                             return rect;
                         }
                     }, 'single-shape');
+                    G6.registerNode('operation-checked', {
+                        drawShape: function drawShape(cfg, group) {
+                            const rect = group.addShape('rect', {
+                                attrs: {
+                                    x: -75,
+                                    y: -25,
+                                    width: 150,
+                                    height: 50,
+                                    radius: 10,
+                                    stroke: '#fa0318',
+                                    fill: '#92949F',
+                                    fillOpacity: 0.45,
+                                    lineWidth: 2
+                                }
+                            });
+                            return rect;
+                        }
+                    }, 'single-shape');
                     that.graph = new G6.Graph({
                         container: 'mountNode',
                         width: window.innerWidth / 3,

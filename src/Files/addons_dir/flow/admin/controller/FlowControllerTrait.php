@@ -36,6 +36,7 @@ trait FlowControllerTrait{
         $sort_to_name[$last_node['node']['sort']] = $last_node['node']['name'] . '(当前)';
         foreach ($nodes as &$node) {
             if ($node['sort'] == $last_node['node']['sort']) {
+                $node['shape'] = 'operation-checked';
                 $node['name'] = $sort_to_name[$last_node['node']['sort']];
             }
             $node['id'] = $node['name'];
