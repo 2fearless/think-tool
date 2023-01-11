@@ -107,8 +107,8 @@ if (!function_exists('copyDir')){
             {
                 if($filename!="." && $filename!="..")
                 {
-                    $subSrcFile = $dirSrc . "\\".$filename;
-                    $subToFile = $dirTo . "\\".$filename;
+                    $subSrcFile = $dirSrc . DIRECTORY_SEPARATOR.$filename;
+                    $subToFile = $dirTo . DIRECTORY_SEPARATOR.$filename;
 
                     if(is_dir($subSrcFile))
                     {

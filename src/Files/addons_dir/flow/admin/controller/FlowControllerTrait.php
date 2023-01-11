@@ -66,6 +66,7 @@ trait FlowControllerTrait{
         $class = new ReflectionClass($this->hwConfig['db']);
         if (request()->isPost()) {
             $data = request()->all();
+            $data['user_id'] = $data['user_id'] ?: 1;
             $flow = FlowProject::where('relate_model', $class->name)->where('relate_id', $id)->find();
             $final = FlowNode::find($data['final']);
             $next = FlowNode::find($data['next_id']);
@@ -88,6 +89,7 @@ trait FlowControllerTrait{
                     $flow->flow_node_id = $fill['flow_node_id'];
                     $flow->flow_step_id = $flow->id;
                     $flow->save();
+                    $finish_flag = 1;
                     break;
                 case 'back':
                     $back = FlowStep::find($data['back']);
@@ -129,6 +131,7 @@ trait FlowControllerTrait{
                 default:
 
             }
+            $this->updateProject($id,$finish_flag);
             return json_ok('操作成功');
         }
         $project = $this->hwConfig['db']::with(['flow' => ['group.nodes', 'steps' => ['user', 'node']]])->find($id)->toArray();
@@ -158,5 +161,10 @@ trait FlowControllerTrait{
             $has_next = 0;
         }
         return view('flow_type/forward', compact('id', 'back', 'next', 'final', 'users', 'back_id', 'final_id', 'has_next'));
+    }
+
+    //进度流程更新项目事件
+    public function updateProject($id,$finish_flag){
+
     }
 }

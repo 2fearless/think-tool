@@ -250,8 +250,8 @@
         },
         created() {
             this.form.code = 'LCBH' + '{$code}'
-            this.departs = JSON.parse('{$departs}'.replace(/&quot;/g, '"'))
-            this.roles = JSON.parse('{$roles}'.replace(/&quot;/g, '"'))
+            this.departs = {:json_encode($departs)};
+            this.roles = {:json_encode($roles)};
         },
         methods: {
             close() {

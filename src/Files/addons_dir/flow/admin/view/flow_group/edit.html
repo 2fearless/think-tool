@@ -253,11 +253,10 @@
             }
         },
         created() {
-            let model = '{$model}'.replace(/\\/g, '\\\\')
-            this.form = JSON.parse(model.replace(/&quot;/g, '"'))
-            this.departs = JSON.parse('{$departs}'.replace(/&quot;/g, '"'))
-            this.roles = JSON.parse('{$roles}'.replace(/&quot;/g, '"'))
-            this.nodes = JSON.parse('{$nodes}'.replace(/&quot;/g, '"'))
+            this.form = {:json_encode($model)};
+            this.departs = {:json_encode($departs)};
+            this.roles = {:json_encode($roles)};
+            this.nodes = {:json_encode($nodes)};
         },
         methods: {
             close() {
