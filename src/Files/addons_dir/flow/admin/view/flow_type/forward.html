@@ -53,7 +53,7 @@
                     {else/}
                     lay-submit
                     {/if}
-                    lay-filter="layuiadmin-app-form-back">退回
+                    lay-filter="layuiadmin-app-form-back">退回重审
             </button>
             <button class="layui-btn layui-btn-lg {if !$has_next}layui-btn-disabled{/if}" style="margin-left: 30px;"
                     {if !$has_next}
@@ -61,7 +61,7 @@
                     {else/}
                     lay-submit
                     {/if}
-                    lay-filter="layuiadmin-app-form-submit">下一步
+                    lay-filter="layuiadmin-app-form-submit">通过
             </button>
             <button class="layui-btn layui-btn-lg layui-btn-danger {if !$has_next}layui-btn-disabled{/if}" style="margin-left: 30px;"
                     {if !$has_next}
@@ -69,7 +69,15 @@
                     {else/}
                     lay-submit
                     {/if}
-                    lay-filter="layuiadmin-app-form-final">归档
+                    lay-filter="layuiadmin-app-form-final">不通过
+            </button>
+            <button class="layui-btn layui-btn-lg {if $has_next}layui-btn-disabled{/if}" style="margin-left: 30px;"
+                    {if $has_next}
+                    disabled
+                    {else/}
+            lay-submit
+            {/if}
+            lay-filter="layuiadmin-app-form-rebuild">重新发起
             </button>
         </div>
     </div>
@@ -143,6 +151,12 @@
         form.on('submit(layuiadmin-app-form-final)', function (obj) {
             var field = obj.field;
             field.way = 'final'
+            submit(field)
+            return false;
+        });
+        form.on('submit(layuiadmin-app-form-rebuild)', function (obj) {
+            var field = obj.field;
+            field.way = 'rebuild'
             submit(field)
             return false;
         });

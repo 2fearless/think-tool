@@ -177,7 +177,8 @@
                 node_title: '',
                 node_sort: 1,
                 visible: false,
-                has_project:'{$has_project}',
+                has_project:false,
+                is_dealing:'{$is_dealing}',
                 tab: 1,
                 form: {
                     type: '项目管理类',
@@ -257,6 +258,7 @@
             this.departs = {:json_encode($departs)};
             this.roles = {:json_encode($roles)};
             this.nodes = {:json_encode($nodes)};
+            this.status_options = {:json_encode($status_options)};
         },
         methods: {
             close() {
@@ -264,29 +266,33 @@
                 parent.layer.close(index); //再执行关闭
             },
             submit() {
-                axios({
-                    method: 'post',
-                    url: '{:url()}',
-                    data: {
-                        data: this.form,
-                        nodes: this.nodes
-                    }
-                }).then((res) => {
-                    if (res.data.code) {
-                        this.$message.success(res.data.msg);
-                        setTimeout(function (){
-                            if (parent.layui.table.index == 1) {
-                                parent.layui.table.reload('LAY-app-content-list');
-                            } else {
-                                parent.layui.treeTable.reload('LAY-app-content-list');
-                            }
-                            const index = parent.layer.getFrameIndex(window.name);
-                            parent.layer.close(index); //再执行关闭
-                        },2000)
-                    } else {
-                        this.$message.error(res.data.msg);
-                    }
-                });
+                if (this.is_dealing){
+                    this.$message.error('请先结束历史流程');
+                }else{
+                    axios({
+                        method: 'post',
+                        url: '{:url()}',
+                        data: {
+                            data: this.form,
+                            nodes: this.nodes
+                        }
+                    }).then((res) => {
+                        if (res.data.code) {
+                            this.$message.success(res.data.msg);
+                            setTimeout(function (){
+                                if (parent.layui.table.index == 1) {
+                                    parent.layui.table.reload('LAY-app-content-list');
+                                } else {
+                                    parent.layui.treeTable.reload('LAY-app-content-list');
+                                }
+                                const index = parent.layer.getFrameIndex(window.name);
+                                parent.layer.close(index); //再执行关闭
+                            },2000)
+                        } else {
+                            this.$message.error(res.data.msg);
+                        }
+                    });
+                }
             },
             sortNode(sort) {
                 function mysort(a, b) {
@@ -323,6 +329,18 @@
                 }
             },
             delNode() {
+                let node = this.nodes[this.select]
+                let link = false
+                this.nodes.forEach((v) =>{
+                    let temp = v.next_id.indexOf(node.id)
+                    if (temp !== -1){
+                        link = true
+                    }
+                })
+                if (link){
+                    this.$message.error('请先解除当前节点关联');
+                    return
+                }
                 this.nodes.splice(this.select, 1)
                 this.sortNode()
                 this.select = this.nodes.length - 1

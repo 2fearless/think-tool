@@ -252,6 +252,7 @@
             this.form.code = 'LCBH' + '{$code}'
             this.departs = {:json_encode($departs)};
             this.roles = {:json_encode($roles)};
+            this.status_options = {:json_encode($status_options)};
         },
         methods: {
             close() {
@@ -319,6 +320,7 @@
             },
             delNode() {
                 this.nodes.splice(this.select, 1)
+                console.log(this.nodes)
                 this.sortNode()
                 this.select = this.nodes.length - 1
                 this.draw_show()

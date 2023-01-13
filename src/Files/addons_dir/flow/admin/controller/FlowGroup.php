@@ -10,8 +10,7 @@ use app\admin\model\FlowStep;
 use app\admin\model\SysDepart;
 use app\admin\model\SysRole;
 use app\common\controller\HwController;
-use app\common\enums\FlowTmplStatusEnum;
-use app\common\enums\YesOrNoEnum;
+use app\admin\model\FlowTmplStatusEnum;
 
 class FlowGroup extends HwController
 {
