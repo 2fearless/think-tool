@@ -3,6 +3,7 @@ declare (strict_types=1);
 
 namespace app\admin\model;
 
+use app\common\enums\YesOrNoEnum;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
@@ -18,7 +19,7 @@ class FlowGroup extends Model
     use SoftDelete;
 
     public function nodes(){
-        return $this->hasMany(FlowNode::class,'flow_group_id')->order('sort','asc');
+        return $this->hasMany(FlowNodeWithDel::class,'flow_group_id');
     }
 
     public function projects(){
@@ -47,11 +48,12 @@ class FlowGroup extends Model
             }
             $group = self::create($data);
         }
-        $has_project = FlowProject::where('flow_group_id',$group->id)->find();
-        if ($has_project){
+
+        $cantDel = FlowStep::cantDel($group['id']);
+        if ($cantDel){
             return;
         }
-        FlowNode::where('flow_group_id',$group->id)->delete();
+        FlowNode::where('flow_group_id',$group['id'])->select()->delete();
 
         foreach ($nodes as $node){
             $node['flow_group_id'] = $group->id;

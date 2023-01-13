@@ -9,9 +9,8 @@ use think\model\concern\SoftDelete;
 /**
  * @mixin \think\Model
  */
-class FlowNode extends FlowNodeWithDel
+class FlowNodeWithDel extends Model
 {
     public $table = 'hw_flow_node';
-    use SoftDelete;
     //
 }

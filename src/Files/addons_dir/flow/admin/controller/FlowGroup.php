@@ -6,23 +6,15 @@ namespace app\admin\controller;
 use app\admin\model\FlowGroup as FlowGroupModel;
 use app\admin\model\FlowNode;
 use app\admin\model\FlowProject;
+use app\admin\model\FlowStep;
 use app\admin\model\SysDepart;
 use app\admin\model\SysRole;
 use app\common\controller\HwController;
+use app\common\enums\FlowTmplStatusEnum;
+use app\common\enums\YesOrNoEnum;
 
 class FlowGroup extends HwController
 {
-    public static $menu = [
-        'name' => '流程管理', 'type' => 0, 'icon' => 'layui-icon-tabs', 'app' => 'admin', 'controller' => 'FlowGroup', 'action' => 'index', 'parameter' => '', 'status' => 1, 'isshow' => 1, 'sort' => 0, 'son' => [
-            ['name' => '流程列表', 'type' => 1, 'icon' => 'icon-md-apps', 'app' => 'admin', 'controller' => 'FlowGroup', 'action' => 'index', 'parameter' => '', 'status' => 1, 'isshow' => 1, 'sort' => 0, 'son' => [
-                ['name' => '流程添加', 'type' => 0, 'icon' => '', 'app' => 'admin', 'controller' => 'FlowGroup', 'action' => 'add', 'parameter' => '', 'status' => 0, 'isshow' => 0, 'sort' => 0],
-                ['name' => '流程编辑', 'type' => 0, 'icon' => '', 'app' => 'admin', 'controller' => 'FlowGroup', 'action' => 'edit', 'parameter' => '', 'status' => 0, 'isshow' => 0, 'sort' => 0],
-                ['name' => '流程删除', 'type' => 0, 'icon' => '', 'app' => 'admin', 'controller' => 'FlowGroup', 'action' => 'delete', 'parameter' => '', 'status' => 0, 'isshow' => 0, 'sort' => 0],
-                ['name' => '流程详情', 'type' => 0, 'icon' => '', 'app' => 'admin', 'controller' => 'FlowGroup', 'action' => 'detail', 'parameter' => '', 'status' => 0, 'isshow' => 0, 'sort' => 0],
-//              ['name' => '流程导入', 'type' => 0, 'icon' => '', 'app' => 'admin', 'controller' => 'FlowGroup', 'action' => 'import', 'parameter' => '', 'status' => 0, 'isshow' => 0, 'sort' => 0],
-//              ['name' => '流程导出', 'type' => 0, 'icon' => '', 'app' => 'admin', 'controller' => 'FlowGroup', 'action' => 'export', 'parameter' => '', 'status' => 0, 'isshow' => 0, 'sort' => 0],
-            ]]
-        ]];
 
     public function initdata($name = [])
     {
@@ -119,7 +111,8 @@ class FlowGroup extends HwController
             }
             return json_ok('保存成功');
         }
-        return view('', compact('code', 'departs', 'roles'));
+        $status_options = FlowTmplStatusEnum::options();
+        return view('', compact('code', 'departs', 'roles','status_options'));
     }
 
     public function edit()
@@ -181,11 +174,9 @@ class FlowGroup extends HwController
                 $node['next_id'] = [];
             }
         }
-        $has_project = FlowProject::where('flow_group_id',input('id'))->find();
-        if ($has_project){
-            $has_project = true;
-        }
-        return view('', compact('departs', 'roles', 'model', 'nodes','has_project'));
+        $is_dealing = FlowStep::cantDel(input('id'));
+        $status_options = FlowTmplStatusEnum::options();
+        return view('', compact('departs', 'roles', 'model', 'nodes','is_dealing','status_options'));
     }
 
 }

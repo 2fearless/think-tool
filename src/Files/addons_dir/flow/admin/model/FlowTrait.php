@@ -7,7 +7,7 @@ trait FlowTrait
     public static function onBeforeInsert($model){
         $class = static::class;
         $group_id = FlowGroup::where('relate_model',$class)->value('id');
-        $nodes = FlowNode::where('flow_group_id',$group_id)->order('sort','asc')->select();
+        $nodes = FlowNode::where('flow_group_id',$group_id)->select();
         $rule = $nodes[0];
         $ids = SysUser::when($rule['depart_id'] != 1,function ($q) use ($rule){
             $q->where('depart_id',$rule['depart_id']);
@@ -27,7 +27,7 @@ trait FlowTrait
     public static function onAfterWrite($model){
         $class = static::class;
         $group_id = FlowGroup::where('relate_model',$class)->value('id');
-        $nodes = FlowNode::where('flow_group_id',$group_id)->order('sort','asc')->select();
+        $nodes = FlowNode::where('flow_group_id',$group_id)->select();
         $flow_project = FlowProject::where('relate_id',$model->id)
             ->where('relate_model',$class)
             ->where('flow_group_id',$group_id)
