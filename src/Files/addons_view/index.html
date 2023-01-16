@@ -10,9 +10,14 @@
     <legend>插件安装</legend>
 </fieldset>
 <div style="width: 80%;margin-left: 10%;"><table class="layui-hide" id="test"></table></div>
-<script type="text/html" id="installBox">
+<script type="text/html" id="action">
     <!-- 这里的 checked 的状态只是演示 -->
-    <input type="checkbox" name="lock" value="{{d.module}}" title="{{ d.installed== 1 ? '已安装' : '安装' }}" lay-filter="install" {{ d.installed== 1 ? 'checked disabled' : '' }}>
+    <!--    <input type="checkbox" name="lock" value="{{d.module}}" title="{{ d.installed== 1 ? '已安装' : '安装' }}" lay-filter="install" {{ d.installed== 1 ? 'checked disabled' : '' }}>-->
+    {{#  if(d.installed== 0){ }}
+    <button type="submit" name="install" value="{{d.module}}" title="{{d.name}}" class="layui-btn layui-btn-primary" lay-filter="install" lay-submit>安装</button>
+    {{#  } else { }}
+    <button type="submit" name="uninstall" value="{{d.module}}" title="{{d.name}}" class="layui-btn layui-btn-danger" lay-filter="uninstall" lay-submit>卸载</button>
+    {{#  } }}
 </script>
 <script type="text/html" id="icon">
     <!-- 这里的 checked 的状态只是演示 -->
@@ -40,41 +45,65 @@
                 ,{field: 'desc', title: '描述', width: 100}
                 ,{field: 'front', title: '前端模块', width: 100}
                 ,{field: 'author', title: '作者', width: 100}
-                ,{field: 'create_time', title: '创建日期', width: 100}
-                , {field: 'installed', title: '安装', width: 130, templet: '#installBox', unresize: true}
+                ,{field: 'create_time', title: '创建日期', width: 130}
+                , {field: 'installed', title: '安装', width: 130, templet: '#action', unresize: true}
             ]]
             , page: true
         });
+        form.on('submit(install)',function (obj){
+            var title = $(this).attr('title');
+            var module = $(this).attr('value')
+            layer.confirm('确认安装：'+title+' 吗？', {
+                title: '提示', btn: ['确认', '取消'] //按钮
+            }, function(index){
+                addonAction(module)
+                //再执行关闭
+                layer.close(index);
+
+            });
+        })
+        form.on('submit(uninstall)',function (obj){
+            var title = $(this).attr('title');
+            var module = $(this).attr('value')
+            layer.confirm('确认卸载插件：'+title+' 吗？', {
+                title: '提示', btn: ['确认', '取消'] //按钮
+            }, function(index){
+                addonAction(module,'remove')
+                layer.close(index);
+            });
+        })
 
         //锁定操作
-        form.on('checkbox(install)', function (obj) {
-            if (obj.elem.checked === true){
-                let value = this.value
-                $.ajax({
-                    url: "/admin/addons/add",    //请求的url地址
-                    dataType: "json",   //返回格式为json
-                    async: true,//请求是否异步，默认为异步，这也是ajax重要特性
-                    type: "POST",   //请求方式
-                    data: {module:value},
-                    success: function (ret) {
-                        obj.elem.disabled = true
-                        if (ret.code == 1) {
-                            //登入成功的提示与跳转
-                            layer.msg(ret.msg, {offset: 'auto', icon: 1, time: 2000}, function () {
-                                //判断列表页是否使用table 如果没有则刷新treeTable
-                            });
-                        } else {
-                            layer.msg(ret.msg, {offset: 'auto', icon: 2, time: 2000, anim: 6}, function () {
-                            });
-                        }
+        // form.on('checkbox(install)', function (obj) {
+        //     if (obj.elem.checked === true){
+        //         let value = this.value
+        //         //安装
+        //         console.log(this.value)
+        //     }
+        // });
+
+        function addonAction(name,type='add'){
+            $.ajax({
+                url: "/admin/addons/"+type,    //请求的url地址
+                dataType: "json",   //返回格式为json
+                async: true,//请求是否异步，默认为异步，这也是ajax重要特性
+                type: "POST",   //请求方式
+                data: {module:name},
+                success: function (ret) {
+                    if (ret.code == 1) {
+                        layui.table.reload('test')
+                        //登入成功的提示与跳转
+                        layer.msg(ret.msg, {offset: 'auto', icon: 1, time: 2000}, function () {
+                            //判断列表页是否使用table 如果没有则刷新treeTable
+                        });
+                    } else {
+                        layer.msg(ret.msg, {offset: 'auto', icon: 2, time: 2000, anim: 6}, function () {
+                        });
                     }
-                });
+                },
 
-                //安装
-                console.log(this.value)
-            }
-        });
-
+            });
+        }
     })
 </script>
 </body>

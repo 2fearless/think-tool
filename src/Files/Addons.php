@@ -16,6 +16,16 @@ class Addons extends HwController
        return json_ok('安装'.$module.'完成');
     }
 
+    public function remove(){
+        $module = input('module');
+        try {
+            Console::call('hw:uninstall',[$module]);
+        }catch (\Exception $exception){
+            return json_error($exception->getMessage());
+        }
+        return json_ok('卸载'.$module.'完成');
+    }
+
     public function index(){
         if (request()->isPost()){
             return json_error('参数错误');
