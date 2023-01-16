@@ -20,6 +20,7 @@ class Mc extends HwController
             ]],
             ['name' => '插件列表', 'type' => 1, 'icon' => 'icon-md-apps', 'app' => 'admin', 'controller' => 'Addons', 'action' => 'index', 'parameter' => '', 'status' => 1, 'isshow' => 1, 'sort' => 0, 'son' => [
                 ['name' => '插件添加', 'type' => 0, 'icon' => '', 'app' => 'admin', 'controller' => 'Addons', 'action' => 'add', 'parameter' => '', 'status' => 0, 'isshow' => 0, 'sort' => 0],
+                ['name' => '插件移除', 'type' => 0, 'icon' => '', 'app' => 'admin', 'controller' => 'Addons', 'action' => 'remove', 'parameter' => '', 'status' => 0, 'isshow' => 0, 'sort' => 0],
                 ['name' => '插件接口', 'type' => 0, 'icon' => '', 'app' => 'admin', 'controller' => 'Addons', 'action' => 'list', 'parameter' => '', 'status' => 0, 'isshow' => 0, 'sort' => 0],
             ]]
         ]
