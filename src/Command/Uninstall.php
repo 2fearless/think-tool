@@ -1,6 +1,6 @@
 <?php
 
-namespace app\command;
+namespace Fearless\ThinkTool\Command;
 
 use think\console\Command;
 use think\console\Input;
