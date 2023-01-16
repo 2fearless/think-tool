@@ -3,6 +3,7 @@
 
 namespace Fearless\ThinkTool\Service;
 
+use app\command\Uninstall;
 use Fearless\ThinkTool\Command\AddAddonsDir;
 use Fearless\ThinkTool\Command\DevAndLogCommand;
 use Fearless\ThinkTool\Command\InitCommand;
@@ -19,6 +20,7 @@ class Service extends \think\Service
         $commands = [TestCommand::class,MakeController::class,UpdateMenu::class,DevAndLogCommand::class,'hw:cover'=>DevAndLogCommand::class,AddAddonsDir::class];
         $commands[] = Install::class;
         $commands[] = InitCommand::class;
+        $commands[] = Uninstall::class;
         $this->commands($commands);
     }
 }
