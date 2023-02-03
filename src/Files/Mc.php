@@ -22,6 +22,7 @@ class Mc extends HwController
                 ['name' => '插件添加', 'type' => 0, 'icon' => '', 'app' => 'admin', 'controller' => 'Addons', 'action' => 'add', 'parameter' => '', 'status' => 0, 'isshow' => 0, 'sort' => 0],
                 ['name' => '插件移除', 'type' => 0, 'icon' => '', 'app' => 'admin', 'controller' => 'Addons', 'action' => 'remove', 'parameter' => '', 'status' => 0, 'isshow' => 0, 'sort' => 0],
                 ['name' => '插件接口', 'type' => 0, 'icon' => '', 'app' => 'admin', 'controller' => 'Addons', 'action' => 'list', 'parameter' => '', 'status' => 0, 'isshow' => 0, 'sort' => 0],
+                ['name' => '插件文档', 'type' => 0, 'icon' => '', 'app' => 'admin', 'controller' => 'Addons', 'action' => 'readme', 'parameter' => '', 'status' => 0, 'isshow' => 0, 'sort' => 0],
             ]]
         ]
     ];

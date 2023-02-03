@@ -69,4 +69,14 @@ class Addons extends HwController
 
         return $data;
     }
+    public function readme(): string{
+        $path = root_path('addons');
+        $name = input('name');
+        $parseDown = new \Parsedown();
+        $content = '# 请联系作者添加描述';
+        if(file_exists($path.$name.DIRECTORY_SEPARATOR.'README.md')){
+            $content = file_get_contents($path.$name.DIRECTORY_SEPARATOR.'README.md');
+        }
+        return $parseDown->parse($content);
+    }
 }

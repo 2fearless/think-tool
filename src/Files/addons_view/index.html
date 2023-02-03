@@ -10,6 +10,9 @@
     <legend>插件安装</legend>
 </fieldset>
 <div style="width: 80%;margin-left: 10%;"><table class="layui-hide" id="test"></table></div>
+<script type="text/html" id="readme">
+    <button type="submit" name="readme" value="{{d.module}}" title="{{d.name}}" class="layui-btn layui-btn-primary" lay-filter="readme" lay-submit>文档</button>
+</script>
 <script type="text/html" id="action">
     <!-- 这里的 checked 的状态只是演示 -->
     <!--    <input type="checkbox" name="lock" value="{{d.module}}" title="{{ d.installed== 1 ? '已安装' : '安装' }}" lay-filter="install" {{ d.installed== 1 ? 'checked disabled' : '' }}>-->
@@ -46,6 +49,7 @@
                 ,{field: 'front', title: '前端模块', width: 100}
                 ,{field: 'author', title: '作者', width: 100}
                 ,{field: 'create_time', title: '创建日期', width: 130}
+                ,{field: 'readme', title: '文档', width: 100,templet: '#readme',}
                 , {field: 'installed', title: '安装', width: 130, templet: '#action', unresize: true}
             ]]
             , page: true
@@ -60,6 +64,17 @@
                 //再执行关闭
                 layer.close(index);
 
+            });
+        })
+        //查看
+        form.on('submit(readme)',function (obj){
+            var title = $(this).attr('title');
+            var module = $(this).attr('value');
+            layer.open({
+                type: 2
+                ,content: "{:url('/admin/addons/readme')}"+'?name='+module
+                ,area: ['90%', '80%']
+                ,title: '检查更新'
             });
         })
         form.on('submit(uninstall)',function (obj){
